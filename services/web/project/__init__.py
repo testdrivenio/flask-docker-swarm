@@ -24,6 +24,8 @@ def create_app(script_info=None):
     migrate.init_app(app, db)
 
     # register blueprints
+    from project.api.main import main_blueprint
+    app.register_blueprint(main_blueprint)
     from project.api.users import users_blueprint
     app.register_blueprint(users_blueprint)
 

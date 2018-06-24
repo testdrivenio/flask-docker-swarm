@@ -3,22 +3,52 @@ version: '3.6'
 services:
 
   web:
-    build: .
-    ports:
-      - 5001:5000
+    build:
+      context: ./services/web
+      dockerfile: Dockerfile
+    expose:
+      - 5000
     environment:
       - FLASK_ENV=production
-      - APP_SETTINGS=project.config.DevelopmentConfig
-      - DATABASE_URL=postgres://postgres:postgres@db:5432/users
+      - APP_SETTINGS=project.config.ProductionConfig
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - SECRET_CODE=myprecious
     depends_on:
       - db
+    networks:
+      - app
 
   db:
     build:
-      context: ./project/db
+      context: ./services/db
       dockerfile: Dockerfile
+    volumes:
+      - data-volume:/var/lib/postgresql/data
     expose:
       - 5432
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+    networks:
+      - app
+
+  nginx:
+    build:
+      context: ./services/nginx
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - 80:80
+    depends_on:
+      - web
+    networks:
+      - app
+
+networks:
+  app:
+    driver: bridge
+
+volumes:
+  data-volume:
+    driver: local
