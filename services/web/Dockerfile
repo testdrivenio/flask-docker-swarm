@@ -17,6 +17,9 @@ RUN pip wheel --no-cache-dir --no-deps --wheel-dir /wheels -r requirements.txt
 # Base Image
 FROM python:3.6-slim
 
+# Install curl
+RUN apt-get update && apt-get install -y curl
+
 # Create directory for the app user
 RUN mkdir -p /home/app
 
