@@ -1,0 +1,87 @@
+version: '3.7'
+
+services:
+
+  web:
+    image: mjhea0/flask-docker-swarm_web:latest
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints: [node.role == worker]
+    expose:
+      - 5000
+    environment:
+      - FLASK_ENV=production
+      - APP_SETTINGS=project.config.ProductionConfig
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+    secrets:
+      - secret_code
+    depends_on:
+      - db
+    networks:
+      - app
+    healthcheck:
+      test: curl --fail http://localhost:5000/ping || exit 1
+      interval: 10s
+      timeout: 2s
+      retries: 5
+
+  db:
+    image: mjhea0/flask-docker-swarm_db:latest
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints: [node.role == manager]
+    volumes:
+      - data-volume:/var/lib/postgresql/data
+    expose:
+      - 5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    networks:
+      - app
+
+  nginx:
+    image: mjhea0/flask-docker-swarm_nginx:latest
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints: [node.role == worker]
+    ports:
+      - 80:80
+    depends_on:
+      - web
+    networks:
+      - app
+
+  visualizer:
+    image: dockersamples/visualizer:latest
+    ports:
+      - 8080:8080
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+    networks:
+      - app
+
+networks:
+  app:
+    driver: overlay
+
+volumes:
+  data-volume:
+    driver: local
+
+secrets:
+  secret_code:
+    external: true
