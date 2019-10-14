@@ -41,7 +41,7 @@ docker stack deploy --compose-file=docker-compose-swarm.yml flask
 
 echo "Create the DB table and apply the seed..."
 
-sleep 10
+sleep 15
 NODE=$(docker service ps -f "desired-state=running" --format "{{.Node}}" flask_web)
 eval $(docker-machine env $NODE)
 CONTAINER_ID=$(docker ps --filter name=flask_web --format "{{.ID}}")

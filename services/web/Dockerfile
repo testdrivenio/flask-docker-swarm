@@ -3,11 +3,19 @@
 ###########
 
 # Base Image
-FROM python:3.6 as builder
+FROM python:3.7 as builder
+
+# Lint
+RUN pip install flake8 black
+WORKDIR /home/app
+COPY project ./project
+COPY manage.py .
+RUN flake8 --ignore=E501 .
+RUN black --check .
 
 # Install Requirements
-COPY requirements.txt /
-RUN pip wheel --no-cache-dir --no-deps --wheel-dir /wheels -r requirements.txt
+COPY requirements.txt .
+RUN pip wheel --no-cache-dir --no-deps --wheel-dir /home/app/wheels -r requirements.txt
 
 
 #########
@@ -15,7 +23,11 @@ RUN pip wheel --no-cache-dir --no-deps --wheel-dir /wheels -r requirements.txt
 #########
 
 # Base Image
-FROM python:3.6-slim
+FROM python:3.7-slim
+
+# ----- NEW ----
+# Install curl
+RUN apt-get update && apt-get install -y curl
 
 # ----- NEW ----
 # Install curl
@@ -34,8 +46,8 @@ RUN mkdir $APP_HOME
 WORKDIR $APP_HOME
 
 # Install Requirements
-COPY --from=builder /wheels /wheels
-COPY --from=builder requirements.txt .
+COPY --from=builder /home/app/wheels /wheels
+COPY --from=builder /home/app/requirements.txt .
 RUN pip install --no-cache /wheels/*
 
 # Copy in the Flask code
