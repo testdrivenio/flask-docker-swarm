@@ -5,7 +5,7 @@ from flask import Blueprint, jsonify, request
 
 
 LOGGER = logging.getLogger("gunicorn.error")
-SECRET_CODE = open("/run/secrets/secret_code", "r").read().strip()
+SECRET_CODE = os.environ.get("SECRET_CODE")
 
 main_blueprint = Blueprint("main", __name__)
 
