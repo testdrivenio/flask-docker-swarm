@@ -50,5 +50,7 @@ docker container exec -it $CONTAINER_ID python manage.py seed_db
 
 
 echo "Get the IP address..."
+
+sleep 10
 eval $(docker-machine env node-1)
 docker-machine ip $(docker service ps -f "desired-state=running" --format "{{.Node}}" flask_nginx)

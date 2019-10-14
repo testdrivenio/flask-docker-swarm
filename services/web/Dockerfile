@@ -29,6 +29,10 @@ FROM python:3.7-slim
 # Install curl
 RUN apt-get update && apt-get install -y curl
 
+# ----- NEW ----
+# Install curl
+RUN apt-get update && apt-get install -y curl
+
 # Create directory for the app user
 RUN mkdir -p /home/app
 
