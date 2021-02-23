@@ -25,7 +25,6 @@ RUN pip wheel --no-cache-dir --no-deps --wheel-dir /home/app/wheels -r requireme
 # Base Image
 FROM python:3.9-slim
 
-# ----- NEW ----
 # Install curl
 RUN apt-get update && apt-get install -y curl
 

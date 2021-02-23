@@ -5,10 +5,9 @@ echo "Spinning up four droplets..."
 
 for i in 1 2 3 4; do
   docker-machine create \
-    --digitalocean-region "nyc1" \
     --driver digitalocean \
-    --digitalocean-size "8gb" \
     --digitalocean-access-token $DIGITAL_OCEAN_ACCESS_TOKEN \
+    --engine-install-url "https://releases.rancher.com/install-docker/19.03.9.sh" \
     node-$i;
 done
 
