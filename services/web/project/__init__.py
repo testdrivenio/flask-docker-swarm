@@ -11,7 +11,6 @@ migrate = Migrate()
 
 
 def create_app(script_info=None):
-
     # instantiate the app
     app = Flask(__name__)
 
