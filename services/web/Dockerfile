@@ -3,10 +3,10 @@
 ###########
 
 # Base Image
-FROM python:3.9 as builder
+FROM python:3.12 as builder
 
 # Lint
-RUN pip install flake8 black
+RUN pip install flake8==6.1.0 black==23.10.1
 WORKDIR /home/app
 COPY project ./project
 COPY manage.py .
@@ -23,7 +23,7 @@ RUN pip wheel --no-cache-dir --no-deps --wheel-dir /home/app/wheels -r requireme
 #########
 
 # Base Image
-FROM python:3.9-slim
+FROM python:3.12-slim
 
 # Create directory for the app user
 RUN mkdir -p /home/app
